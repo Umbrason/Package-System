@@ -8,7 +8,8 @@ using System.Linq;
 
 public static class ResourceManager
 {
-    private static Dictionary<Type, Dictionary<Guid, PackageContent>> LoadedResources = new Dictionary<Type, Dictionary<Guid, PackageContent>>();
+    private static Dictionary<Type, Dictionary<Guid, PackageContent>> loadedResources = new Dictionary<Type, Dictionary<Guid, PackageContent>>();
+    private static Queue<PackageContent> dirtyAssets = new Queue<PackageContent>();
 
     #region Asset Getters
     public static T[] GetAllLoadedAssets<T>() where T : PackageContent => GetAllLoadedAssets(typeof(T)).Cast<T>().ToArray();
@@ -36,7 +37,7 @@ public static class ResourceManager
     public static bool TryGetAsset<T>(Guid guid, out T asset) where T : PackageContent => asset = TryGetAsset(guid, typeof(T), out PackageContent c) ? (T)c : null;
     public static bool TryGetAsset(Guid guid, Type type, out PackageContent asset)
     {
-        if (LoadedResources.TryGetValue(type, out Dictionary<Guid, PackageContent> contentDictionary) && contentDictionary.TryGetValue(guid, out PackageContent content))
+        if (loadedResources.TryGetValue(type, out Dictionary<Guid, PackageContent> contentDictionary) && contentDictionary.TryGetValue(guid, out PackageContent content))
         {
             asset = content;
             return true;
@@ -62,6 +63,22 @@ public static class ResourceManager
         if (contentDictionary.ContainsKey(guid))
             contentDictionary.Remove(guid);
     }
+    #endregion
+
+    #region Saving of Assets
+
+    public static void RegisterDirtyAsset(PackageContent asset) => dirtyAssets.Enqueue(asset);
+    public static void SaveSingleAsset(PackageContent content)
+    {
+        content.SaveToDisk();
+        dirtyAssets = new Queue<PackageContent>(dirtyAssets.Where((x) => x.IsDirty));
+    }
+    public static void SaveAll()
+    {
+        while (dirtyAssets.Count > 0)
+            dirtyAssets.Dequeue().SaveToDisk();
+    }
+
     #endregion
 
     #region Loading of Assets
@@ -169,10 +186,10 @@ public static class ResourceManager
     #region private getter functions
     private static Dictionary<Guid, PackageContent> GetLoadedContentDict(Type type)
     {
-        if (!LoadedResources.TryGetValue(type, out Dictionary<Guid, PackageContent> contentDictionary))
+        if (!loadedResources.TryGetValue(type, out Dictionary<Guid, PackageContent> contentDictionary))
         {
             contentDictionary = new Dictionary<Guid, PackageContent>();
-            LoadedResources.Add(type, contentDictionary);
+            loadedResources.Add(type, contentDictionary);
         }
         return contentDictionary;
     }
