@@ -1,0 +1,17 @@
+{
+  "name": "com.umbrason.packagesystem",
+  "version": "1.0.0",
+  "displayName": "Package System",
+  "description": "The 'Package System' package contains a framework for dealing with UGC's (UserGeneratedContents)",
+  "keywords": [
+    "UGC"
+  ],
+  "author": {
+    "name": "Umbrason"
+  },
+  "hideInEditor": false,
+  "dependencies": {
+
+    "com.umbrason.runtimeserialization" : "1.0.0"
+  }
+}
