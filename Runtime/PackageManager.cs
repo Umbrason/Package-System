@@ -25,9 +25,7 @@ namespace PackageSystem
         public void Awake()
         {
             if (singleton != null && singleton != this)
-            {
                 Destroy(singleton.gameObject);
-            }
             DontDestroyOnLoad(gameObject);
             singleton = this;
             FetchManifests();
@@ -44,16 +42,13 @@ namespace PackageSystem
             if (!Directory.Exists(PackageSystemPathVariables.PackagePath))
                 Directory.CreateDirectory(PackageSystemPathVariables.PackagePath);
 
-            string[] PackageManifestFiles = Directory.GetFiles(PackageSystemPathVariables.PackagePath, $"*{PackageSystemPathVariables.PackageManifestSuffix}", SearchOption.AllDirectories);
+            string[] PackageManifestFiles = Directory.GetFiles(PackageSystemPathVariables.PackagePath, $"*{PackageSystemPathVariables.DefaultFileSuffix<PackageManifest>()}", SearchOption.AllDirectories);
             List<PackageManifest> manifests = new List<PackageManifest>();
             foreach (string filePath in PackageManifestFiles)
             {
                 if (PackageSerializationHelper.TryDeserializePackageContent<PackageManifest>(filePath, out PackageManifest manifest))
-                {
                     manifests.Add(manifest);
-                }
-                else
-                    Debug.LogWarning($"{filePath} could not be deserialized");
+                else Debug.LogWarning($"{filePath} could not be deserialized");
             }
             currentManifests.Clear();
             foreach (PackageManifest manifest in manifests)
