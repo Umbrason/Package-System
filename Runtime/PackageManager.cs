@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-
 namespace PackageSystem
 {
     public class PackageManager : MonoBehaviour

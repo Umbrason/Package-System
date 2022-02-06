@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using UnityEngine;
 
-public static class PackageSerializationHelper
+namespace PackageSystem
 {
-    public static void SerializePackageContent(PackageContent target, string filePath) => Serialize(target, filePath);
+    public static class PackageSerializationHelper
+    {
+        public static void SerializePackageContent(PackageContent target, string filePath) => Serialize(target, filePath);
 
         public static bool TryDeserializePackageContent<T>(string filePath, out T target) where T : PackageContent, new() => TryDeserialize<T>(filePath, out target);
 
@@ -21,7 +23,7 @@ public static class PackageSerializationHelper
             }
             target = default;
             return false;
-        }        
+        }
 
         public static void Serialize(object target, string filePath)
         {
@@ -94,4 +96,5 @@ public static class PackageSerializationHelper
 
             return (PackageContent)data;
         }
+    }
 }
