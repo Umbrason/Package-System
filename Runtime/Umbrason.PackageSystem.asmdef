@@ -1,6 +1,6 @@
 {
     "name": "Umbrason.PackageSystem",
-    "rootNamespace": "",
+    "rootNamespace": "PackageSystem",
     "references": [
         "GUID:f7eae8c8c3028c24492d28a794f46bef"
     ],

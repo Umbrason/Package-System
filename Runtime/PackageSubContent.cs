@@ -10,8 +10,8 @@ public abstract class PackageSubContent<T> : PackageContent where T : PackageCon
     public Guid parentPackageGuid;
 
     [XmlIgnore] public Type ParentType { get { return typeof(T); } }
-    [XmlIgnore] public override string FilePath { get { return EnginePathVariables.SubFilePath(this); } }
-    [XmlIgnore] public override string FolderPath { get { return EnginePathVariables.SubFolderPath(this); } }
+    [XmlIgnore] public override string FilePath { get { return PackageSystemPathVariables.SubFilePath(this); } }
+    [XmlIgnore] public override string FolderPath { get { return PackageSystemPathVariables.SubFolderPath(this); } }
     [XmlIgnore] private T parent;
     [XmlIgnore] public T Parent { get { return parent ??= GetParent(); } }
 
