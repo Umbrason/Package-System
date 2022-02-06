@@ -16,7 +16,7 @@ namespace PackageSystem
         [XmlIgnore]
         public override Guid PackageGuid { get { return guid; } set { guid = value; } }
         [XmlIgnore]
-        public override string FilePath { get { return DirectoryPath + "/manifest" + PackageSystemPathVariables.PackageManifestSuffix; } }
+        public override string FilePath { get { return DirectoryPath + "/manifest" + PackageSystemPathVariables.DefaultFileSuffix<PackageManifest>(); } }
         [XmlIgnore]
         public string DirectoryPath { get { return PackageSystemPathVariables.PackagePath + $"package-{base.guid}"; } }
 

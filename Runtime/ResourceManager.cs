@@ -261,7 +261,7 @@ namespace PackageSystem
                 var directoryPath = PackageSystemPathVariables.SubFolderPath(parentAsset, subAssetType);
                 if (!Directory.Exists(directoryPath))
                     continue;
-                var files = Directory.GetFiles(directoryPath, $"*{PackageSystemPathVariables.FileSuffix(subAssetType)}");
+                var files = Directory.GetFiles(directoryPath, $"*{PackageSystemPathVariables.DefaultFileSuffix(subAssetType)}");
                 Debug.Log($"{directoryPath} contains {SerializationUtil.IEnumerableToString(files)}");
                 foreach (var path in files)
                 {
