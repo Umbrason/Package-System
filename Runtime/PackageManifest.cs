@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 
 namespace PackageSystem
 {
-    [System.Serializable]
+    [Serializable]
     ///<summary> contains information about the packages content </summary>
     public class PackageManifest : PackageContent
     {
