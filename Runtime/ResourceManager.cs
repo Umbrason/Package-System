@@ -54,8 +54,8 @@ namespace PackageSystem
         public static void RegisterAsset(PackageContent asset, Type type)
         {
             var dict = GetLoadedContentDict(type);
-            if (!dict.ContainsKey(asset.guid))
-                dict.Add(asset.guid, asset);
+            if (!dict.ContainsKey(asset.Guid))
+                dict.Add(asset.Guid, asset);
         }
 
         public static void RemoveAsset<T>(Guid guid) => RemoveAsset(typeof(T), guid);
@@ -91,8 +91,8 @@ namespace PackageSystem
                 return asset;
             var dict = GetLoadedContentDict(type);
             asset = DeserializeAssetInPackage(package, guid, type);
-            asset.OnLoad(package.guid);
-            dict.Add(asset.guid, asset);
+            asset.OnLoad(package.Guid);
+            dict.Add(asset.Guid, asset);
             return asset;
         }
 
@@ -109,7 +109,7 @@ namespace PackageSystem
                 return null;
             }
             asset.OnLoad(parentAsset.PackageGuid);
-            dict[asset.guid] = asset;
+            dict[asset.Guid] = asset;
             return asset;
         }
 
@@ -131,8 +131,8 @@ namespace PackageSystem
                         wasteGuids.Enqueue(guid);
                         continue;
                     }
-                    asset.OnLoad(package.guid);
-                    loadedContentDictionary.Add(asset.guid, asset);
+                    asset.OnLoad(package.Guid);
+                    loadedContentDictionary.Add(asset.Guid, asset);
                 }
             }
             if (wasteGuids.Count > 0)
@@ -174,8 +174,8 @@ namespace PackageSystem
                     Task<T> task = LoadAsync<T>(package, guid);
                     await task;
                     T asset = task.Result;
-                    asset.OnLoad(package.guid);
-                    dict.Add(asset.guid, asset);
+                    asset.OnLoad(package.Guid);
+                    dict.Add(asset.Guid, asset);
                     OnLoadCallback.Invoke(asset);
                 }
             }

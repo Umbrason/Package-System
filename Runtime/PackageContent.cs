@@ -5,28 +5,29 @@ using System.Xml.Serialization;
 
 namespace PackageSystem
 {
-    [System.Serializable]
+    [Serializable]
     public abstract class PackageContent
     {
-        public Guid guid = Guid.NewGuid();
-
-        private bool isDirty;
-        public bool IsDirty { get { return isDirty; } }
-
+        #region identification meta data
+        private Guid guid = Guid.NewGuid();
+        public Guid Guid { get { return guid; } }
+        private Guid packageGuid;
         public string name = "Unnamed";
         public string groupName = "Misc";
         private SerializableTexture2D icon;
         public virtual SerializableTexture2D Icon { get { return icon; } set { icon = value; } }
+        #endregion
 
-        [XmlIgnore]
-        public virtual string FilePath { get { return PackageSystemPathVariables.FilePath(this); } }
-        public virtual string FolderPath { get { return PackageSystemPathVariables.FolderPath(this); } }
-
-        private Guid packageGuid;
-        [XmlIgnore]
-        public virtual Guid PackageGuid { get { return packageGuid; } set { packageGuid = value; } }
+        #region creation metadata
         public DateTime creationTime;
         public string creatorName;
+        #endregion
+        [NonSerialized] private bool isDirty;
+        public bool IsDirty { get { return isDirty; } }
+
+        [XmlIgnore] public virtual Guid PackageGuid { get { return packageGuid; } set { packageGuid = value; } }
+        [XmlIgnore] public virtual string FilePath { get { return PackageSystemPathVariables.FilePath(this); } }
+        [XmlIgnore] public virtual string FolderPath { get { return PackageSystemPathVariables.FolderPath(this); } }
 
         public PackageContent() { }
 
@@ -56,8 +57,8 @@ namespace PackageSystem
         {
             if (PackageManager.Instance.TryGetPackageManifest(PackageGuid, out PackageManifest package))
             {
-                package.RemoveEntry(this.GetType(), guid);
-                ResourceManager.RemoveAsset(this.GetType(), guid);
+                package.RemoveEntry(this.GetType(), Guid);
+                ResourceManager.RemoveAsset(this.GetType(), Guid);
             }
         }
 
@@ -73,7 +74,7 @@ namespace PackageSystem
         {
             creatorName = "Umbrason";
             creationTime = System.DateTime.Now;
-            PackageGuid = manifest.guid;
+            PackageGuid = manifest.Guid;
             RegisterToResourceManager();
         }
 

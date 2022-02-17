@@ -10,20 +10,17 @@ namespace PackageSystem
     ///<summary> contains information about the packages content </summary>
     public class PackageManifest : PackageContent
     {
-        public XmlDictionary<string, List<Guid>> packageContentGuids = new XmlDictionary<string, List<Guid>>();
+        public SerializableDictionary<string, List<Guid>> packageContentGuids = new SerializableDictionary<string, List<Guid>>();
         public List<Guid> dependencyGuids = new List<Guid>();
 
         [XmlIgnore]
-        public override Guid PackageGuid { get { return guid; } set { guid = value; } }
+        public override Guid PackageGuid { get { return Guid; } }
         [XmlIgnore]
         public override string FilePath { get { return DirectoryPath + "/manifest" + PackageSystemPathVariables.DefaultFileSuffix<PackageManifest>(); } }
         [XmlIgnore]
-        public string DirectoryPath { get { return PackageSystemPathVariables.PackagePath + $"package-{base.guid}"; } }
+        public string DirectoryPath { get { return PackageSystemPathVariables.PackagePath + $"package-{base.Guid}"; } }
 
-        public PackageManifest()
-        {
-            this.guid = Guid.NewGuid();
-        }
+        public PackageManifest() { }
 
         public override void OnLoad(Guid packageGuid)
         {
@@ -33,7 +30,6 @@ namespace PackageSystem
         public PackageManifest(string name = "new package")
         {
             this.name = name;
-            this.guid = Guid.NewGuid();
         }
 
 

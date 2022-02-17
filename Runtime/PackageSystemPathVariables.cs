@@ -21,7 +21,7 @@ namespace PackageSystem
         public static string SubFolderPath<T>(PackageSubContent<T> target) where T : PackageContent, new()
             => SubFolderPath(target.Parent, target.GetType());
         public static string SubFolderPath(PackageContent parent, Type subType)
-            => $"{parent.FolderPath}{parent.guid}\\{subType.Name}\\";
+            => $"{parent.FolderPath}{parent.Guid}\\{subType.Name}\\";
 
 
         ///<summary>Generic method returning a file suffix for all files of type 'T' including '.'</summary>
@@ -36,15 +36,15 @@ namespace PackageSystem
         public static string DefaultFileSuffixNoDot(Type type) => type == typeof(PackageManifest) ? "packagemanifest" : $"{string.Concat(type.Name.Where(c => c >= 'A' && c <= 'Z'))}";                
 
         public static string FilePath(PackageContent target)
-            => FilePath(target.PackageGuid, target.guid, target.GetType());
+            => FilePath(target.PackageGuid, target.Guid, target.GetType());
         public static string FilePath(PackageManifest manifest, Guid contentGuid, Type contentType)
-            => FilePath(manifest.guid, contentGuid, contentType);
+            => FilePath(manifest.Guid, contentGuid, contentType);
         public static string FilePath(Guid packageGuid, Guid contentGuid, Type type)
             => $"{PackagePath}package-{packageGuid}\\{type.Name}\\{contentGuid}{DefaultFileSuffix(type)}";
 
         public static string SubFilePath<T>(PackageSubContent<T> target) where T : PackageContent, new()
-            => SubFilePath(target.Parent, target.guid, target.GetType());
+            => SubFilePath(target.Parent, target.Guid, target.GetType());
         public static string SubFilePath(PackageContent parent, Guid subGuid, Type subType)
-            => $"{parent.FolderPath}{parent.guid}\\{subType.Name}\\{subGuid}{DefaultFileSuffix(subType)}";
+            => $"{parent.FolderPath}{parent.Guid}\\{subType.Name}\\{subGuid}{DefaultFileSuffix(subType)}";
     }
 }

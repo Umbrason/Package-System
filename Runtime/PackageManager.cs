@@ -52,7 +52,7 @@ namespace PackageSystem
             }
             currentManifests.Clear();
             foreach (PackageManifest manifest in manifests)
-                currentManifests.Add(manifest.guid, manifest);
+                currentManifests.Add(manifest.Guid, manifest);
 
             OnReloadManifests.Invoke();
         }

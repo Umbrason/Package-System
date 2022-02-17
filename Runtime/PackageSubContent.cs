@@ -23,7 +23,7 @@ namespace PackageSystem
                 return parent;
             if (PackageManager.Instance.TryGetPackageManifest(parentPackageGuid, out PackageManifest manifest))
                 return ResourceManager.LoadAsset<T>(manifest, parentGuid);
-            Debug.LogError($"Parent ({ParentType}:{parentGuid}) of ({GetType()}:{name}-{guid}) not found!");
+            Debug.LogError($"Parent ({ParentType}:{parentGuid}) of ({GetType()}:{name}-{Guid}) not found!");
             return null;
         }
 
