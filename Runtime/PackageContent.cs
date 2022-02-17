@@ -9,13 +9,13 @@ namespace PackageSystem
     public abstract class PackageContent
     {
         #region identification meta data
-        private Guid guid = Guid.NewGuid();
+        [XmlElement()] private Guid guid = Guid.NewGuid();
         public Guid Guid { get { return guid; } }
-        private Guid packageGuid;
+        [XmlElement()] private Guid packageGuid;
         public string name = "Unnamed";
         public string groupName = "Misc";
-        private SerializableTexture2D icon;
-        public virtual SerializableTexture2D Icon { get { return icon; } set { icon = value; } }
+        [XmlElement()] private SerializableTexture2D icon;
+        [XmlIgnore] public virtual SerializableTexture2D Icon { get { return icon; } set { icon = value; } }
         #endregion
 
         #region creation metadata
