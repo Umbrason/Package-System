@@ -9,13 +9,13 @@ namespace PackageSystem
     public abstract class PackageContent
     {
         #region identification meta data
-        [XmlElement()] private Guid guid = Guid.NewGuid();
+        private Guid guid = Guid.NewGuid();
         public Guid Guid { get { return guid; } }
-        [XmlElement()] private Guid packageGuid;
+        private Guid packageGuid;
         public string name = "Unnamed";
         public string groupName = "Misc";
-        [XmlElement()] private SerializableTexture2D icon;
-        [XmlIgnore] public virtual SerializableTexture2D Icon { get { return icon; } set { icon = value; } }
+        private SerializableTexture2D icon;
+        public virtual SerializableTexture2D Icon { get { return icon; } set { icon = value; } }
         #endregion
 
         #region creation metadata
@@ -25,9 +25,9 @@ namespace PackageSystem
         [NonSerialized] private bool isDirty;
         public bool IsDirty { get { return isDirty; } }
 
-        [XmlIgnore] public virtual Guid PackageGuid { get { return packageGuid; } set { packageGuid = value; } }
-        [XmlIgnore] public virtual string FilePath { get { return PackageSystemPathVariables.FilePath(this); } }
-        [XmlIgnore] public virtual string FolderPath { get { return PackageSystemPathVariables.FolderPath(this); } }
+        public virtual Guid PackageGuid { get { return packageGuid; } set { packageGuid = value; } }
+        public virtual string FilePath { get { return PackageSystemPathVariables.FilePath(this); } }
+        public virtual string FolderPath { get { return PackageSystemPathVariables.FolderPath(this); } }
 
         public PackageContent() { }
 

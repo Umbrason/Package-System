@@ -11,12 +11,10 @@ namespace PackageSystem
         public Guid parentGuid;
         public Guid parentPackageGuid;
 
-        [XmlIgnore] public Type ParentType { get { return typeof(T); } }
-        [XmlIgnore] public override string FilePath { get { return PackageSystemPathVariables.SubFilePath(this); } }
-        [XmlIgnore] public override string FolderPath { get { return PackageSystemPathVariables.SubFolderPath(this); } }
-        [XmlIgnore] [NonSerialized] private T cached_parent;
-        
-        [XmlIgnore]
+        public Type ParentType { get { return typeof(T); } }
+        public override string FilePath { get { return PackageSystemPathVariables.SubFilePath(this); } }
+        public override string FolderPath { get { return PackageSystemPathVariables.SubFolderPath(this); } }
+        [NonSerialized] private T cached_parent;                
         public T Parent
         {
             get

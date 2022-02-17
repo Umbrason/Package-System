@@ -20,8 +20,6 @@ namespace PackageSystem
 
         public UnityEvent OnReloadManifests = new UnityEvent();
 
-
-
         public void Awake()
         {
             if (singleton != null && singleton != this)
@@ -30,12 +28,6 @@ namespace PackageSystem
             singleton = this;
             FetchManifests();
         }
-
-        public void SavePackage(PackageManifest manifest)
-        {
-
-        }
-
 
         public void FetchManifests()
         {
