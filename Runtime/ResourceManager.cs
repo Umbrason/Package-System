@@ -146,8 +146,8 @@ namespace PackageSystem
         public static PackageContent[] LoadAllSubAssets(PackageContent parentAsset, Type subType)
         {
             var subAssets = DeserializeAllSubAssets(parentAsset, subType);
-            foreach (PackageContent subAsset in subAssets)            
-                RegisterAsset(subAsset);            
+            foreach (PackageContent subAsset in subAssets)
+                RegisterAsset(subAsset);
             return subAssets;
         }
 
@@ -199,8 +199,8 @@ namespace PackageSystem
         private static T DeserializeAssetAtPath<T>(string path) where T : PackageContent, new() => (T)DeserializeAssetAtPath(path, typeof(T));
         private static PackageContent DeserializeAssetAtPath(string path, Type type)
         {
-            if (SerializationManager.TryDeserialize<PackageContent>(path, out PackageContent asset))            
-                return asset;
+            if (SerializationManager.TryDeserialize(path, type, out object asset))
+                return asset as PackageContent;
             return null;
         }
 
@@ -208,8 +208,8 @@ namespace PackageSystem
         private static PackageContent DeserializeAssetInPackage(PackageManifest package, Guid guid, Type type)
         {
             var path = PackageSystemPathVariables.FilePath(package, guid, type);
-            if (SerializationManager.TryDeserialize<PackageContent>(path, out PackageContent asset))            
-                return asset;
+            if (SerializationManager.TryDeserialize(path, type, out object asset))
+                return asset as PackageContent;
             return null;
         }
 
@@ -223,7 +223,7 @@ namespace PackageSystem
         private static async Task<PackageContent> DeserializeAssetAtPathAsync(string path, Type type)
         {
             var asset = await SerializationManager.DeserializeAsync<PackageContent>(path);
-            if (asset != null)            
+            if (asset != null)
                 return asset;
             return null;
         }
