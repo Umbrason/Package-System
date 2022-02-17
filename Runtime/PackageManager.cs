@@ -46,7 +46,7 @@ namespace PackageSystem
             List<PackageManifest> manifests = new List<PackageManifest>();
             foreach (string filePath in PackageManifestFiles)
             {
-                if (PackageSerializationHelper.TryDeserializePackageContent<PackageManifest>(filePath, out PackageManifest manifest))
+                if (SerializationManager.TryDeserialize<PackageManifest>(filePath, out PackageManifest manifest))
                     manifests.Add(manifest);
                 else Debug.LogWarning($"{filePath} could not be deserialized");
             }

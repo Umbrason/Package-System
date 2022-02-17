@@ -17,14 +17,14 @@ namespace PackageSystem
         public static T[] GetAllLoadedAssets<T>() where T : PackageContent => GetAllLoadedAssets(typeof(T)).Cast<T>().ToArray();
         public static PackageContent[] GetAllLoadedAssets(Type type)
         {
-            Dictionary<Guid, PackageContent> dict = GetLoadedContentDict(type);
+            var dict = GetLoadedContentDict(type);
             return dict.Values.ToArray();
         }
 
         public static Guid[] GetAllLoadedAssetGuids<T>() where T : PackageContent
         {
-            Dictionary<Guid, PackageContent> dict = GetLoadedContentDict(typeof(T));
-            Guid[] keys = dict.Keys.ToArray();
+            var dict = GetLoadedContentDict(typeof(T));
+            var keys = dict.Keys.ToArray();
             return keys;
         }
 
@@ -53,17 +53,17 @@ namespace PackageSystem
         public static void RegisterAsset<T>(T asset) where T : PackageContent => RegisterAsset(asset, typeof(T));
         public static void RegisterAsset(PackageContent asset, Type type)
         {
-            Dictionary<Guid, PackageContent> contentDictionary = GetLoadedContentDict(type);
-            if (!contentDictionary.ContainsKey(asset.guid))
-                contentDictionary.Add(asset.guid, asset);
+            var dict = GetLoadedContentDict(type);
+            if (!dict.ContainsKey(asset.guid))
+                dict.Add(asset.guid, asset);
         }
 
         public static void RemoveAsset<T>(Guid guid) => RemoveAsset(typeof(T), guid);
         public static void RemoveAsset(Type type, Guid guid)
         {
-            Dictionary<Guid, PackageContent> contentDictionary = GetLoadedContentDict(type);
-            if (contentDictionary.ContainsKey(guid))
-                contentDictionary.Remove(guid);
+            var dict = GetLoadedContentDict(type);
+            if (dict.ContainsKey(guid))
+                dict.Remove(guid);
         }
         #endregion
 
@@ -89,10 +89,10 @@ namespace PackageSystem
         {
             if (TryGetAsset(guid, type, out PackageContent asset))
                 return asset;
-            Dictionary<Guid, PackageContent> contentDictionary = GetLoadedContentDict(type);
+            var dict = GetLoadedContentDict(type);
             asset = DeserializeAssetInPackage(package, guid, type);
             asset.OnLoad(package.guid);
-            contentDictionary.Add(asset.guid, asset);
+            dict.Add(asset.guid, asset);
             return asset;
         }
 
@@ -101,7 +101,7 @@ namespace PackageSystem
         {
             if (TryGetAsset(subGuid, subType, out PackageContent asset))
                 return asset;
-            Dictionary<Guid, PackageContent> contentDictionary = GetLoadedContentDict(subType);
+            var dict = GetLoadedContentDict(subType);
             asset = DeserializeSubAsset(parentAsset, subGuid, subType);
             if (!asset)
             {
@@ -109,7 +109,7 @@ namespace PackageSystem
                 return null;
             }
             asset.OnLoad(parentAsset.PackageGuid);
-            contentDictionary[asset.guid] = asset;
+            dict[asset.guid] = asset;
             return asset;
         }
 
@@ -145,11 +145,9 @@ namespace PackageSystem
         public static S[] LoadAllSubAssets<S>(PackageContent parentAsset) where S : PackageContent, new() => LoadAllSubAssets(parentAsset, typeof(S)).Cast<S>().ToArray();
         public static PackageContent[] LoadAllSubAssets(PackageContent parentAsset, Type subType)
         {
-            PackageContent[] subAssets = DeserializeAllSubAssets(parentAsset, subType);
-            foreach (PackageContent subAsset in subAssets)
-            {
-                RegisterAsset(subAsset);
-            }
+            var subAssets = DeserializeAllSubAssets(parentAsset, subType);
+            foreach (PackageContent subAsset in subAssets)            
+                RegisterAsset(subAsset);            
             return subAssets;
         }
 
@@ -159,7 +157,7 @@ namespace PackageSystem
             if (package.packageContentGuids.TryGetValue(typeof(T).ToString(), out List<Guid> Guids))
             {
                 string filePath = PackageSystemPathVariables.FilePath(package, guid, typeof(T));
-                T asset = await PackageSerializationHelper.DeserializeAsync<T>(filePath);
+                T asset = await SerializationManager.DeserializeAsync<T>(filePath);
                 Debug.Log("loaded Asset");
                 return asset;
             }
@@ -168,20 +166,20 @@ namespace PackageSystem
         }
         public static async void LoadAllAssetsAsync<T>(PackageManifest package, System.Action<T> OnLoadCallback, System.Action<T[]> OnFinishedLoading) where T : PackageContent, new()
         {
-            Dictionary<Guid, PackageContent> contentDictionary = GetLoadedContentDict(typeof(T));
+            var dict = GetLoadedContentDict(typeof(T));
             foreach (Guid guid in package.packageContentGuids[typeof(T).ToString()])
             {
-                if (!contentDictionary.ContainsKey(guid))
+                if (!dict.ContainsKey(guid))
                 {
                     Task<T> task = LoadAsync<T>(package, guid);
                     await task;
                     T asset = task.Result;
                     asset.OnLoad(package.guid);
-                    contentDictionary.Add(asset.guid, asset);
+                    dict.Add(asset.guid, asset);
                     OnLoadCallback.Invoke(asset);
                 }
             }
-            OnFinishedLoading.Invoke((T[])contentDictionary.Values.ToArray());
+            OnFinishedLoading.Invoke((T[])dict.Values.ToArray());
         }
         #endregion
 
@@ -201,40 +199,32 @@ namespace PackageSystem
         private static T DeserializeAssetAtPath<T>(string path) where T : PackageContent, new() => (T)DeserializeAssetAtPath(path, typeof(T));
         private static PackageContent DeserializeAssetAtPath(string path, Type type)
         {
-            if (PackageSerializationHelper.TryDeserializePackageContent(path, type, out PackageContent asset))
-            {
+            if (SerializationManager.TryDeserialize<PackageContent>(path, out PackageContent asset))            
                 return asset;
-            }
             return null;
         }
 
         private static T DeserializeAssetInPackage<T>(PackageManifest package, Guid guid) where T : PackageContent, new() => (T)DeserializeAssetInPackage(package, guid, typeof(T));
         private static PackageContent DeserializeAssetInPackage(PackageManifest package, Guid guid, Type type)
         {
-            string path = PackageSystemPathVariables.FilePath(package, guid, type);
-            if (PackageSerializationHelper.TryDeserializePackageContent(path, type, out PackageContent asset))
-            {
+            var path = PackageSystemPathVariables.FilePath(package, guid, type);
+            if (SerializationManager.TryDeserialize<PackageContent>(path, out PackageContent asset))            
                 return asset;
-            }
             return null;
         }
 
         private static async Task<T> DeserializeAssetAtPathAsync<T>(string path) where T : PackageContent, new()
         {
-            T asset = await PackageSerializationHelper.DeserializeAsync<T>(path);
+            var asset = await SerializationManager.DeserializeAsync<T>(path);
             if (asset != null)
-            {
                 return asset;
-            }
             return null;
         }
         private static async Task<PackageContent> DeserializeAssetAtPathAsync(string path, Type type)
         {
-            PackageContent asset = await PackageSerializationHelper.DeserializePackageContentAsync(path, type);
-            if (asset != null)
-            {
+            var asset = await SerializationManager.DeserializeAsync<PackageContent>(path);
+            if (asset != null)            
                 return asset;
-            }
             return null;
         }
 
@@ -243,10 +233,10 @@ namespace PackageSystem
         {
             foreach (PackageManifest m in PackageManager.Instance.packageManifests)
             {
-                string path = PackageSystemPathVariables.SubFilePath(parentAsset, subGuid, subType);
-                PackageContent content = DeserializeAssetAtPath(path, subType);
-                if (content)
-                    return content;
+                var path = PackageSystemPathVariables.SubFilePath(parentAsset, subGuid, subType);
+                var asset = DeserializeAssetAtPath(path, subType);
+                if (asset)
+                    return asset;
                 Debug.Log($"asset not found at path {path}");
             }
             return null;
