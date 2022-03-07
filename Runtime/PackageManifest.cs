@@ -14,7 +14,7 @@ namespace PackageSystem
         public List<Guid> dependencyGuids = new List<Guid>();
         
         public override Guid PackageGuid { get { return Guid; } }
-        public override string FilePath { get { return DirectoryPath + "/manifest" + PackageSystemPathVariables.DefaultFileSuffix<PackageManifest>(); } }        
+        public override string FilePath { get { return DirectoryPath + "\\manifest" + PackageSystemPathVariables.DefaultFileSuffix<PackageManifest>(); } }        
         public string DirectoryPath { get { return PackageSystemPathVariables.PackagePath + $"package-{base.Guid}"; } }
 
         public PackageManifest() { }
