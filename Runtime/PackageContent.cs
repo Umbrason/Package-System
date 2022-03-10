@@ -8,30 +8,33 @@ namespace PackageSystem
     [Serializable]
     public abstract class PackageContent
     {
-        #region identification meta data
+        #region GUIDs
         private Guid guid = Guid.NewGuid();
-        public Guid Guid { get { return guid; } }
         private Guid packageGuid;
+        #endregion 
+
+        #region meta data
         public string name = "Unnamed";
         public string groupName = "Misc";
+        public string creatorName = "Unknown";
+        public DateTime creationTime;
         private SerializableTexture2D icon;
         public virtual SerializableTexture2D Icon { get { return icon; } set { icon = value; } }
         #endregion
 
-        #region creation metadata
-        public DateTime creationTime;
-        public string creatorName;
-        #endregion
         [NonSerialized] private bool isDirty;
-        public bool IsDirty { get { return isDirty; } }
 
+        #region properties
+        public bool IsDirty { get { return isDirty; } }
+        public Guid Guid { get { return guid; } }
         public virtual Guid PackageGuid { get { return packageGuid; } set { packageGuid = value; } }
         public virtual string FilePath { get { return PackageSystemPathVariables.FilePath(this); } }
         public virtual string FolderPath { get { return PackageSystemPathVariables.FolderPath(this); } }
+        #endregion
 
         public PackageContent() { }
 
-        //handy little bool operator overload
+        ///<summary> equal to 'target != null' </summary>
         public static implicit operator bool(PackageContent value) => value != null;
 
 

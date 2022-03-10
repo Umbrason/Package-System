@@ -10,11 +10,22 @@ namespace PackageSystem
     ///<summary> contains information about the packages content </summary>
     public class PackageManifest : PackageContent
     {
+        #region meta data
+        //name
+        //author
+        //creation date
+        public string description;
+        public List<string> tags;        
+        #endregion
+
+        #region GUID references
         public SerializableDictionary<string, List<Guid>> packageContentGuids = new SerializableDictionary<string, List<Guid>>();
         public List<Guid> dependencyGuids = new List<Guid>();
-        
+        #endregion 
+
+
         public override Guid PackageGuid { get { return Guid; } }
-        public override string FilePath { get { return DirectoryPath + "\\manifest" + PackageSystemPathVariables.DefaultFileSuffix<PackageManifest>(); } }        
+        public override string FilePath { get { return DirectoryPath + "\\manifest" + PackageSystemPathVariables.DefaultFileSuffix<PackageManifest>(); } }
         public string DirectoryPath { get { return PackageSystemPathVariables.PackagePath + $"package-{base.Guid}"; } }
 
         public PackageManifest() { }
