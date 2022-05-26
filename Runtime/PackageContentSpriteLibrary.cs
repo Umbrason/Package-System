@@ -4,5 +4,6 @@ using UnityEngine;
 
 namespace PackageSystem
 {
+    [CreateAssetMenu]
     public class PackageContentSpriteLibrary : TypeObjectLibrary<PackageContent, Sprite> { }
 }
