@@ -5,4 +5,4 @@ using UnityEngine;
 using UnityEditor;
 
 [CustomEditor(typeof(PackageContentSpriteLibrary))]
-public class PackageContentSpriteLibraryEditor : ComponentObjectLibraryEditor<PackageContent,Sprite>{}
+public class PackageContentSpriteLibraryEditor : TypeObjectLibraryEditor<PackageContent,Sprite>{}
