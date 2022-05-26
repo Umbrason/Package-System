@@ -1,0 +1,18 @@
+{
+    "name": "Umbrason.PackageSystem.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:441c25f1ba416364dbc5663906f07a84",
+        "GUID:a34bd63156277a3419c81bf5223a8d44",
+        "GUID:1c7a233b41d5cce4cae05c16396d6549"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
