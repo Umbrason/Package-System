@@ -9,8 +9,9 @@ namespace PackageSystem
 {
     public static class PackageSystemPathVariables
     {
+        private const string LONGPATH_PREFIX = "\\\\?\\";
         ///<summary>Persistent path containing various data such as save-files and packages</summary>
-        private static string DataPath { get { return Application.isEditor ? $"\\\\?\\{Path.GetFullPath($"{Application.dataPath.Replace("/", "\\")}\\..\\ApplicationData")}" : Application.persistentDataPath; } }
+        private static string DataPath { get { return Application.isEditor ? $"{Path.GetFullPath($"{Application.dataPath.Replace("/", "\\")}\\..\\ApplicationData")}" : Application.persistentDataPath; } }
 
         ///<summary>Path containing all packages including '\' at the end</summary>
         public static string PackagePath { get { return DataPath + "\\Packages\\"; } }

@@ -49,10 +49,10 @@ namespace PackageSystem
         }
         #endregion
 
-        #region Manual Resource Management
-        public static void RegisterAsset<T>(T asset) where T : PackageContent => RegisterAsset(asset, typeof(T));
-        public static void RegisterAsset(PackageContent asset, Type type)
+        #region Manual Resource Management        
+        public static void RegisterAsset(PackageContent asset)
         {
+            var type = asset.GetType();
             var dict = GetLoadedContentDict(type);
             if (!dict.ContainsKey(asset.Guid))
                 dict.Add(asset.Guid, asset);
@@ -69,7 +69,7 @@ namespace PackageSystem
 
         #region Saving of Assets
 
-        public static void RegisterDirtyAsset(PackageContent asset) => dirtyAssets.Enqueue(asset);
+        public static void EnqueueDirtyAsset(PackageContent asset) => dirtyAssets.Enqueue(asset);
         public static void SaveSingleAsset(PackageContent content)
         {
             content.SaveToDisk();
@@ -77,7 +77,7 @@ namespace PackageSystem
         }
         public static void SaveAll()
         {
-            while (dirtyAssets.Count > 0)
+            while (dirtyAssets.Count > 0)                
                 dirtyAssets.Dequeue().SaveToDisk();
         }
 
@@ -251,6 +251,7 @@ namespace PackageSystem
                 var directoryPath = PackageSystemPathVariables.SubFolderPath(parentAsset, subAssetType);
                 if (!Directory.Exists(directoryPath))
                     continue;
+                //TODO: make packagesubcontents  registered in package manifests instead of searching for all files in folders
                 var files = Directory.GetFiles(directoryPath, $"*{PackageSystemPathVariables.DefaultFileSuffix(subAssetType)}");
                 Debug.Log($"{directoryPath} contains {SerializationUtil.IEnumerableToString(files)}");
                 foreach (var path in files)

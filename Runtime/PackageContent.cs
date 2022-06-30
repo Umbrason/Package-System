@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml.Serialization;
-
+using UnityEngine;
 
 namespace PackageSystem
 {
@@ -16,8 +17,8 @@ namespace PackageSystem
         #region meta data
         public string name = "Unnamed";
         public string groupName = "Misc";
-        public string creatorName = "Unknown";
-        public DateTime creationTime;
+        private string creatorName = "Unknown";
+        //private DateTime creationTime = DateTime.Now;
         private SerializableTexture2D icon;
         public virtual SerializableTexture2D Icon { get { return icon; } set { icon = value; } }
         #endregion
@@ -41,27 +42,33 @@ namespace PackageSystem
         public virtual void SaveToDisk()
         {
             isDirty = false;
+            Debug.Log($"saving {this.name} at {FilePath}");
             SerializationManager.Serialize(this, FilePath);
         }
 
-        public virtual void RegisterToPackage(Guid guid)
+        public bool TryRegisterToPackage(Guid guid)
         {
-            PackageGuid = guid;
-            if (PackageManager.Instance.TryGetPackageManifest(PackageGuid, out PackageManifest manifest))
-                manifest.RegisterEntry(this.GetType(), guid);
+            if (!PackageManager.Instance.TryGetPackageManifest(PackageGuid, out PackageManifest manifest))
+                return false;
+            RegisterToPackage(manifest);
+            return true;
         }
 
-        public virtual void RegisterToResourceManager()
+        public virtual void RegisterToPackage(PackageManifest manifest)
         {
-            ResourceManager.RegisterAsset(this, this.GetType());
+            PackageGuid = manifest.guid;
+            manifest.RegisterEntry(this.GetType(), guid);
         }
 
-        public virtual void RemoveFromPackage()
+
+
+        public void Destroy()
         {
             if (PackageManager.Instance.TryGetPackageManifest(PackageGuid, out PackageManifest package))
             {
                 package.RemoveEntry(this.GetType(), Guid);
                 ResourceManager.RemoveAsset(this.GetType(), Guid);
+                File.Delete(FilePath);
             }
         }
 
@@ -69,16 +76,17 @@ namespace PackageSystem
         {
             if (isDirty)
                 return;
-            ResourceManager.RegisterDirtyAsset(this);
+            ResourceManager.EnqueueDirtyAsset(this);
             isDirty = true;
         }
 
         public virtual void OnCreation(PackageManifest manifest)
         {
             creatorName = "Umbrason";
-            creationTime = System.DateTime.Now;
-            PackageGuid = manifest.Guid;
-            RegisterToResourceManager();
+            //creationTime = System.DateTime.Now;
+            RegisterToPackage(manifest);
+            ResourceManager.RegisterAsset(this);
+            SetDirty();
         }
 
         public virtual void OnLoad(Guid packageGuid)

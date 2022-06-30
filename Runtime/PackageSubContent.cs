@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System;
-using System.Xml.Serialization;
 
 namespace PackageSystem
 {
@@ -14,7 +11,7 @@ namespace PackageSystem
         public Type ParentType { get { return typeof(T); } }
         public override string FilePath { get { return PackageSystemPathVariables.SubFilePath(this); } }
         public override string FolderPath { get { return PackageSystemPathVariables.SubFolderPath(this); } }
-        [NonSerialized] private T cached_parent;                
+        [NonSerialized] private T cached_parent;
         public T Parent
         {
             get
@@ -31,6 +28,6 @@ namespace PackageSystem
         public override void OnLoad(Guid packageGuid) => base.OnLoad(packageGuid);
         public PackageSubContent() { }
         public PackageSubContent(Guid parentGuid) { this.parentGuid = parentGuid; }
-        public override void RegisterToPackage(Guid guid) { }
+        public override void RegisterToPackage(PackageManifest manifest) { }
     }
 }
